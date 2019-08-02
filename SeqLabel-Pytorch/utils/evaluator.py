@@ -82,7 +82,7 @@ class Evaluator(object):
         network.eval()
         total_loss = 0.0
         total_num = 0
-        for batch in tqdm.tqdm(data_loader):
+        for batch in data_loader:
             batch_size = batch[0].size(0)
             total_num += batch_size
 

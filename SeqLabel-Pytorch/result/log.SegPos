@@ -1,0 +1,27 @@
+__module__ = config
+model = BiLSTM_CRF
+net_file = ./save/bilstm_crf.pt
+vocab_file = ./save/vocab.pkl
+seg = True
+word_hidden = 300
+layers = 1
+dropout = 0.55
+word_dim = 100
+optimizer = adam
+epoch = 30
+gpu = -1
+lr = 0.01
+batch_size = 256
+eval_batch = 100
+tread_num = 4
+decay = 0.05
+patience = 10
+shuffle = True
+__doc__ = None
+setting:
+Namespace(gpu=7, pre_emb=False, seed=10, thread=4)
+
+using GPU device : 7
+GPU seed = 10
+CPU seed = 10
+loading three datasets...

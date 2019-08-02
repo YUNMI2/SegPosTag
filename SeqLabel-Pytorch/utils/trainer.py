@@ -12,10 +12,10 @@ class Trainer(object):
         self.config = config
         # choose optimizer
         if config.optimizer == 'sgd':
-            print('Using SGD optimizer...')
+            print('Using SGD optimizer...', flush = True)
             self.optimizer = optim.SGD(network.parameters(), lr=config.lr)
         elif config.optimizer == 'adam':
-            print('Using Adam optimizer...')
+            print('Using Adam optimizer...', flush = True)
             self.optimizer = optim.Adam(network.parameters(), lr=config.lr)
 
     def lr_decay(self, optimizer, epoch, decay_rate, init_lr):
@@ -34,16 +34,17 @@ class Trainer(object):
         train_loader, dev_loader, test_loader = data_loaders
 
         # begin to train
-        print('start to train the model ')
+        print('start to train the model ', flush = True)
         for e in range(self.config.epoch):
-            print('==============================Epoch<%d>==============================' % (e + 1))
+            print('==============================Epoch<%d>==============================' % (e + 1), flush = True)
             self.network.train()
             time_start = datetime.datetime.now()
 
             if self.config.optimizer == 'sgd':
                 self.lr_decay(self.optimizer, e, self.config.decay, self.config.lr)
                 
-            for batch in tqdm.tqdm(train_loader):
+            #for batch in tqdm.tqdm(train_loader):
+            for batch in train_loader:
                 self.optimizer.zero_grad()
                 mask, out, targets = self.network.forward_batch(batch)
                 loss = self.network.get_loss(out, targets, mask)
@@ -53,17 +54,17 @@ class Trainer(object):
                 self.optimizer.step()
 
             with torch.no_grad():
-                print("Computing Train Loss.........")
+                print("Computing Train Loss.........", flush = True)
                 train_loss, train_p, train_r, train_f = evaluator.eval(self.network, train_loader)
-                print('train : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (train_loss, train_p, train_r, train_f))
+                print('train : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (train_loss, train_p, train_r, train_f), flush = True)
 
-                print("Computing Dev Loss.........")
+                print("Computing Dev Loss.........", flush = True)
                 dev_loss, dev_p, dev_r, dev_f  = evaluator.eval(self.network, dev_loader)
-                print('dev   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (dev_loss, dev_p, dev_r, dev_f))
+                print('dev   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (dev_loss, dev_p, dev_r, dev_f), flush = True)
 
-                print("Computing Test Loss.........")
+                print("Computing Test Loss.........", flush = True)
                 test_loss, test_p, test_r, test_f = evaluator.eval(self.network, test_loader)
-                print('test  : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (test_loss, test_p, test_r, test_f))
+                print('test  : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (test_loss, test_p, test_r, test_f), flush = True)
                 
             # save the model when dev precision get better
             if dev_f > max_dev_f:
@@ -71,17 +72,18 @@ class Trainer(object):
                 max_test_f = test_f
                 max_epoch = e + 1
                 patience = 0
-                print('save the model...')
+                print('Ex best epoch is epoch = %d ,the dev f1 = %.4f the test f1 = %.4f' %(max_epoch, max_dev_f, max_test_f), flush = True)
+                print('save the model...', flush = True)
                 torch.save(self.network, self.config.net_file)
             else:
                 patience += 1
 
             time_end = datetime.datetime.now()
-            print('iter executing time is ' + str(time_end - time_start) + '\n')
+            print('iter executing time is ' + str(time_end - time_start) + '\n', flush = True)
             if patience > self.config.patience:
                 break
 
-        print('train finished with epoch: %d / %d' % (e + 1, self.config.epoch))
+        print('train finished with epoch: %d / %d' % (e + 1, self.config.epoch), flush = True)
         print('best epoch is epoch = %d ,the dev f1 = %.4f the test f1 = %.4f' %
-            (max_epoch, max_dev_f, max_test_f))
-        print(str(datetime.datetime.now()))
+            (max_epoch, max_dev_f, max_test_f), flush = True)
+        print(str(datetime.datetime.now()), flush = True)
