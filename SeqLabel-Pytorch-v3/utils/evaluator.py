@@ -82,6 +82,11 @@ class Evaluator(object):
         network.eval()
         total_loss = 0.0
         total_num = 0
+        
+        wordSeq = []
+        predictSeq = []
+        targetSeq = [] 
+        
         for batch in data_loader:
             batch_size = batch[0].size(0)
             total_num += batch_size
@@ -94,29 +99,32 @@ class Evaluator(object):
 
             predicts = Decoder.viterbi_batch(network.crf, out, mask)
             targets = torch.split(targets[mask], sen_lens.tolist())
+            words = torch.split(batch[0][mask], sen_lens.tolist())
+            
+            
 
-            if not self.seg:
-                for predict, target in zip(predicts, targets):
-                    predict = predict.tolist()
-                    target = target.tolist()
+            for word, predict, target in zip(words, predicts, targets):
+                assert word.__len__() == predict.__len__() == target.__len__()
+                word, predict, target = self.vocab.id2word(word.tolist()), self.vocab.id2label(predict.tolist()), self.vocab.id2label(target.tolist())
+                wordSeq.append(word)
+                predictSeq.append(predict)
+                targetSeq.append(target)
+                if not self.seg:
                     correct_num = sum(x==y for x,y in zip(predict, target))
                     self.correct_num += correct_num
                     self.pred_num += len(predict)
                     self.gold_num += len(target)
-            else:
-                for predict, target in zip(predicts, targets):
-                    predict_labels = self.vocab.id2label(predict.tolist())
-                    target_labels = self.vocab.id2label(target.tolist())
-                    correct_num, predict_num, target_num = PRF(predict_labels, target_labels).SegPos()
+                else:
+                    correct_num, predict_num, target_num = PRF(predict, target).SegPos()
                     self.correct_num += correct_num
                     self.pred_num += predict_num
                     self.gold_num += target_num
-
+ 
 
         precision = self.correct_num/self.pred_num
         recall = self.correct_num/self.gold_num
         f1 = 2*precision*recall/(precision+recall)
 
         self.clear_num()
-        return total_loss/total_num, precision, recall, f1
+        return total_loss/total_num, precision, recall, f1, wordSeq, predictSeq, targetSeq
 

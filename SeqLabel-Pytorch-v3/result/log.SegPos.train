@@ -7,11 +7,12 @@ word_hidden = 300
 layers = 1
 dropout = 0.55
 word_dim = 100
+predictOut = True
 optimizer = adam
 epoch = 1
 gpu = -1
 lr = 0.01
-batch_size = 256
+batch_size = 64
 eval_batch = 100
 tread_num = 4
 decay = 0.05
@@ -19,9 +20,9 @@ patience = 10
 shuffle = True
 __doc__ = None
 setting:
-Namespace(gpu=5, pre_emb=False, seed=10, thread=4)
+Namespace(gpu=7, pre_emb=False, seed=10, thread=4)
 
-using GPU device : 5
+using GPU device : 7
 GPU seed = 10
 CPU seed = 10
 loading three datasets...
@@ -42,15 +43,3 @@ Using Adam optimizer...
 start to train the model 
 ==============================Epoch<1>==============================
 Computing Train Loss.........
-train : loss = 23.2606  precision = 0.7990  recall = 0.7997  f1 = 0.7993
-Computing Dev Loss.........
-dev   : loss = 23.1293  precision = 0.7932  recall = 0.7914  f1 = 0.7923
-Computing Test Loss.........
-test  : loss = 23.9296  precision = 0.7874  recall = 0.7890  f1 = 0.7882
-Ex best epoch is epoch = 1 ,the dev f1 = 0.7923 the test f1 = 0.7882
-save the model...
-iter executing time is 0:01:14.134116
-
-train finished with epoch: 1 / 1
-best epoch is epoch = 1 ,the dev f1 = 0.7923 the test f1 = 0.7882
-2019-08-05 10:44:42.344580

@@ -119,7 +119,13 @@ class Vocab(object):
     def id2label(self, id):
         assert (isinstance(id, int) or isinstance(id, list))
         if isinstance(id, int):
-            assert (id >= self.num_labels)
             return self._labels[id]
         elif isinstance(id, list):
             return [self._labels[i] for i in id]
+    
+    def id2word(self, id):
+        assert (isinstance(id, int) or isinstance(id, list))
+        if isinstance(id, int):
+            return self._words[id]
+        elif isinstance(id, list):
+            return [self._words[i] for i in id]

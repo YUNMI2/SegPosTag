@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     time_start = datetime.datetime.now()
     with torch.no_grad():
-        test_loss, test_p, test_r, test_f = evaluator.eval(network, test_loader)
+        test_loss, test_p, test_r, test_f, test_word, test_predict, test_target = evaluator.eval(network, test_loader)
         print('test  : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (test_loss, test_p, test_r, test_f), flush = True)
     #print('test  : loss = %.4f  precision = %.4f' % (test_loss, test_p))
     time_end = datetime.datetime.now()

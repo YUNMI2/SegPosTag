@@ -19,6 +19,7 @@ config.seg = False    # only do Pos, accuracy evaluate
 ## running
 
 ```
+./clean.sh  # remove all tmp file
 ./train.sh  # train a model 
 ./test.sh   # test a model 
 ```

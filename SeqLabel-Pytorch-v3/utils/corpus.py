@@ -23,3 +23,5 @@ class Corpus(object):
                     self.word_num += 1
                 line = f.readline()
         print('%s : sentences:%d，words:%d' % (filename, self.sentence_num, self.word_num))
+
+
