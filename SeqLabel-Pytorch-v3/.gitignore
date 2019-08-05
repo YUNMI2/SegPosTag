@@ -1,9 +1,0 @@
-.idea
-.DS_Store
-*.pyc
-*.pkl
-.vscode
-*.db
-*conll
-*-hwc
-*.pt
