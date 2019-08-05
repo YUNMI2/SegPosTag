@@ -1,17 +1,21 @@
 class Config(object):
-    #train_file = '../data/ctb5-train.conll'
-    #train_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Train90-Fine.SegPos.conll'
-    #dev_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Dev5-Fine.SegPos.conll'
-    #test_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Test5-Fine.SegPos.conll'
+    train_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Train90-Fine.SegPos.conll'
+    dev_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Dev5-Fine.SegPos.conll'
+    test_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Test5-Fine.SegPos.conll'
+    eval_file = '/search/odin/zhuyun/Data/PostData/EN_NUM/english_num2.conll'
+    
     embedding_file = '' #'../data/embedding/giga.100.txt'
-    train_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-train.segpos.conll'
-    dev_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-dev.segpos.conll'
-    test_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-test.segpos.conll'
+    
+    #train_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-train.segpos.conll'
+    #dev_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-dev.segpos.conll'
+    #test_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-test.segpos.conll'
+    #eval_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-test.segpos.conll'
 
     predict_train_file = './predict/ctb5-train-out.segpos.conll'
     predict_dev_file = './predict/ctb5-dev-out.segpos.conll'
     predict_test_file = './predict/ctb5-test-out.segpos.conll'
-
+    predict_eval_file = './eval/PostEN.predict.conll' 
+    
 class Char_LSTM_CRF_Config(Config):
     model = 'Char_LSTM_CRF'
     net_file = './save/char_lstm_crf.pt'
@@ -25,6 +29,7 @@ class Char_LSTM_CRF_Config(Config):
     word_dim = 100
 
     predictOut = False
+    
     optimizer = 'adam'
     epoch = 100
     gpu = -1
@@ -51,6 +56,7 @@ class BiLSTM_CRF_Config(Config):
     word_dim = 100
 
     predictOut = True
+    
     optimizer = 'adam'
     epoch = 1
     gpu = -1

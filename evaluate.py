@@ -8,6 +8,7 @@ from config import config
 from model.bilstm_crf import BiLSTM_CRF
 from train import process_data
 from utils import *
+from utils.mylib import *
 
 if __name__ == '__main__':
     # init config
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     else:
         network.cpu()
     print('loading three datasets...', flush =True)
-    test = Corpus(config.test_file)
+    test = Corpus(config.eval_file)
     # process test data , change string to index
     print('processing datasets...', flush =True)
     test_data = process_data(vocab, test, max_word_len=30)
@@ -62,6 +63,8 @@ if __name__ == '__main__':
     with torch.no_grad():
         test_loss, test_p, test_r, test_f, test_word, test_predict, test_target = evaluator.eval(network, test_loader)
         print('test  : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (test_loss, test_p, test_r, test_f), flush = True)
+    if config.predictOut:
+        writeConll(config.predict_eval_file, test_word, test_predict, test_target)
     #print('test  : loss = %.4f  precision = %.4f' % (test_loss, test_p))
     time_end = datetime.datetime.now()
     print('iter executing time is ' + str(time_end - time_start), flush =True)
