@@ -5,7 +5,7 @@ import torch
 import torch.utils.data as Data
 
 from config import config
-from model import Char_LSTM_CRF, BiLSTM_CRF
+from model.bilstm_crf import BiLSTM_CRF
 from train import process_data
 from utils import *
 
@@ -19,15 +19,15 @@ if __name__ == '__main__':
     parser.add_argument('--gpu', type=int, default=config.gpu, help='gpu id, set to -1 if use cpu mode')
     parser.add_argument('--thread', type=int, default=config.tread_num, help='thread num')
     args = parser.parse_args()
-    print('setting:')
-    print(args)
+    print('setting:', flush =True)
+    print(args, flush =True)
 
     # choose GPU
     if args.gpu >= 0:
         use_cuda = True
         torch.cuda.set_device(args.gpu)
         torch.set_num_threads(args.thread)
-        print('using GPU device : %d' % args.gpu)
+        print('using GPU device : %d' % args.gpu, flush =True)
     else:
         torch.set_num_threads(args.thread)
         use_cuda = False
@@ -35,17 +35,17 @@ if __name__ == '__main__':
     # loading vocab
     vocab = load_pkl(config.vocab_file)
     # loading network
-    print("loading model...")
+    print("loading model...", flush =True)
     network = torch.load(config.net_file)
     # if use GPU , move all needed tensors to CUDA
     if use_cuda:
         network.cuda()
     else:
         network.cpu()
-    print('loading three datasets...')
+    print('loading three datasets...', flush =True)
     test = Corpus(config.test_file)
     # process test data , change string to index
-    print('processing datasets...')
+    print('processing datasets...', flush =True)
     test_data = process_data(vocab, test, max_word_len=30)
     test_loader = Data.DataLoader(
         dataset=test_data,
@@ -54,12 +54,14 @@ if __name__ == '__main__':
         collate_fn=collate_fn if not use_cuda else collate_fn_cuda
     )
 
-    # init evaluator
-    evaluator = Evaluator(vocab)
-    print('evaluating test data...')
+    # init evaluatior
+    evaluator = Evaluator(vocab, config)
+    print('evaluating test data...', flush =True)
 
     time_start = datetime.datetime.now()
-    test_loss, test_p = evaluator.eval(network, test_loader)
-    print('test  : loss = %.4f  precision = %.4f' % (test_loss, test_p))
+    with torch.no_grad():
+        test_loss, test_p, test_r, test_f = evaluator.eval(network, test_loader)
+        print('test  : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (test_loss, test_p, test_r, test_f), flush = True)
+    #print('test  : loss = %.4f  precision = %.4f' % (test_loss, test_p))
     time_end = datetime.datetime.now()
-    print('iter executing time is ' + str(time_end - time_start))
+    print('iter executing time is ' + str(time_end - time_start), flush =True)

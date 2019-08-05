@@ -1,8 +1,8 @@
 class Config(object):
     #train_file = '../data/ctb5-train.conll'
-    train_file = '../Data/google-text-normalization-data/TNFine-Data/Train90-Fine'
-    dev_file = '../Data/google-text-normalization-data/TNFine-Data/Dev5-Fine'
-    test_file = '../Data/google-text-normalization-data/TNFine-Data/Test5-Fine'
+    train_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-train.segpos.conll'
+    dev_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-dev.segpos.conll'
+    test_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/ctb5-test.segpos.conll'
     embedding_file = '' #'../data/embedding/giga.100.txt'
 
 
@@ -44,7 +44,7 @@ class BiLSTM_CRF_Config(Config):
     word_dim = 100
 
     optimizer = 'adam'
-    epoch = 30
+    epoch = 1
     gpu = -1
     lr = 0.01
     batch_size = 256
