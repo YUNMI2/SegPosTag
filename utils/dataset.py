@@ -22,3 +22,17 @@ def collate_fn(data):
 def collate_fn_cuda(data):
     batch = zip(*data)
     return tuple([torch.tensor(x).cuda() if len(x[0].size()) < 1 else pad_sequence(x, True).cuda() for x in batch])
+
+
+
+def process_data(vocab, word_seqs, label_seqs, max_word_len=30):
+    word_idxs, label_idxs = [], []
+
+    for wordseq, labelseq in zip(word_seqs, label_seqs):
+        _word_idxs = vocab.word2id(wordseq)
+        _label_idxs = vocab.label2id(labelseq)
+
+        word_idxs.append(torch.tensor(_word_idxs)) # 将句中每个词都转成ID的list，然后再转成tensor
+        label_idxs.append(torch.tensor(_label_idxs))
+
+    return TensorDataSet(word_idxs, label_idxs)

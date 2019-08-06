@@ -1,3 +1,6 @@
+import os
+
+
 def is_start_label(label):
     return label[0] in ["B", "b", "S", "s", "O", "o"]
 
@@ -29,3 +32,9 @@ def writeConll(fileName, wordSeq, predictSeq, targetSeq):
             if i % (predictSeq.__len__()//10) == 0:
                 print(".", end="", flush=True)
     print("\nFinish Writing file!\n", flush=True)
+
+
+def loadAllFile(path):
+     assert os.path.exists(path)
+     fileHoldName = path if path.endswith("/") else path + "/"
+     return sorted([fileHoldName + file for file in os.listdir(fileHoldName) if not os.path.isdir(file)])

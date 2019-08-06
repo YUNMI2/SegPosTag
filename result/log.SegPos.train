@@ -1,0 +1,99 @@
+setting:
+Namespace(gpu=7, pre_emb=False, seed=10, thread=4)
+
+using GPU device : 7
+GPU seed = 10
+CPU seed = 10
+__module__ = config
+model = BiLSTM_CRF
+net_file = ./save/bilstm_crf.pt
+vocab_file = ./save/vocab.pkl
+use_cuda = True
+seg = True
+word_hidden = 300
+layers = 1
+dropout = 0.55
+word_dim = 100
+predictOut = False
+optimizer = adam
+epoch = 10
+gpu = -1
+lr = 0.01
+batch_size = 64
+eval_batch = 100
+tread_num = 4
+decay = 0.05
+patience = 10
+shuffle = True
+__doc__ = None
+loading three datasets...
+in Train : sentences:16091，words:714878
+in Dev : sentences:803，words:33332
+in Test : sentences:1910，words:81660
+Words : 3635, labels : 98
+BiLSTM_CRF(
+  (drop1): Dropout(p=0.55)
+  (embedding): Embedding(3635, 100, padding_idx=0)
+  (lstm_layer): LSTM(100, 150, batch_first=True, bidirectional=True)
+  (out): Linear(in_features=300, out_features=98, bias=True)
+  (crf): CRFlayer()
+)
+Using Adam optimizer...
+start to train the model 
+==============================Epoch<1>==============================
+Computing Train Loss.........
+Train   : loss = 10.0317  precision = 0.8773  recall = 0.8714  f1 = 0.8743
+Computing Dev Loss.........
+dev   : loss = 11.0852  precision = 0.8640  recall = 0.8547  f1 = 0.8593
+Computing Test Loss.........
+test  : loss = 11.7873  precision = 0.8527  recall = 0.8488  f1 = 0.8507
+Ex best epoch is epoch = 1 ,the dev f1 = 0.8593 the test f1 = 0.8507
+save the model...
+iter executing time is 0:02:07.436306
+
+==============================Epoch<2>==============================
+Computing Train Loss.........
+Train   : loss = 7.2437  precision = 0.8968  recall = 0.8990  f1 = 0.8979
+Computing Dev Loss.........
+dev   : loss = 8.9866  precision = 0.8769  recall = 0.8765  f1 = 0.8767
+Computing Test Loss.........
+test  : loss = 9.5477  precision = 0.8680  recall = 0.8706  f1 = 0.8693
+Ex best epoch is epoch = 2 ,the dev f1 = 0.8767 the test f1 = 0.8693
+save the model...
+iter executing time is 0:02:11.342106
+
+==============================Epoch<3>==============================
+Computing Train Loss.........
+Train   : loss = 6.2105  precision = 0.9107  recall = 0.9113  f1 = 0.9110
+Computing Dev Loss.........
+dev   : loss = 8.3502  precision = 0.8853  recall = 0.8842  f1 = 0.8847
+Computing Test Loss.........
+test  : loss = 9.0644  precision = 0.8706  recall = 0.8719  f1 = 0.8712
+Ex best epoch is epoch = 3 ,the dev f1 = 0.8847 the test f1 = 0.8712
+save the model...
+iter executing time is 0:02:17.323123
+
+==============================Epoch<4>==============================
+Computing Train Loss.........
+Train   : loss = 5.6425  precision = 0.9187  recall = 0.9161  f1 = 0.9174
+Computing Dev Loss.........
+dev   : loss = 7.9555  precision = 0.8928  recall = 0.8855  f1 = 0.8891
+Computing Test Loss.........
+test  : loss = 8.5977  precision = 0.8789  recall = 0.8766  f1 = 0.8778
+Ex best epoch is epoch = 4 ,the dev f1 = 0.8891 the test f1 = 0.8778
+save the model...
+iter executing time is 0:02:16.972003
+
+==============================Epoch<5>==============================
+Computing Train Loss.........
+Train   : loss = 5.4612  precision = 0.9199  recall = 0.9184  f1 = 0.9191
+Computing Dev Loss.........
+dev   : loss = 7.9422  precision = 0.8913  recall = 0.8875  f1 = 0.8894
+Computing Test Loss.........
+test  : loss = 8.6031  precision = 0.8793  recall = 0.8778  f1 = 0.8786
+Ex best epoch is epoch = 5 ,the dev f1 = 0.8894 the test f1 = 0.8786
+save the model...
+iter executing time is 0:02:10.881220
+
+==============================Epoch<6>==============================
+Computing Train Loss.........

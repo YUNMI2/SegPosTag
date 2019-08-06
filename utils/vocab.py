@@ -6,6 +6,26 @@ import torch.nn.init as init
 
 
 class Vocab(object):
+    def __init__(self, word_freq, label_freq, min_freq=1):
+        words = [word for word, freq in word_freq.items() if freq > min_freq]
+        labels = list(label_freq.keys()) 
+        
+        self.UNK = "<UNK>"
+        self.PAD = "<PAD>"
+           
+        self._words = [self.PAD] + words + [self.UNK]
+        self._labels = labels
+
+        self._word2id = {w: i for i, w in enumerate(self._words)}
+        self._label2id = {l: i for i, l in enumerate(self._labels)}
+
+        self.num_words = len(self._words)
+        self.num_labels = len(self._labels)
+
+        self.UNK_word_index = self._word2id[self.UNK]
+        self.PAD_word_index = self._word2id[self.PAD]
+
+    '''
     def collect(self, corpus, min_freq=1):
         labels = sorted(set(chain(*corpus.label_seqs)))
         words = list(chain(*corpus.word_seqs))
@@ -41,7 +61,8 @@ class Vocab(object):
         # self.UNK_char_index = self._char2id[self.UNK]
         self.PAD_word_index = self._word2id[self.PAD]
         # self.PAD_char_index = self._char2id[self.PAD]
-
+    '''
+   
     '''
     def read_embedding(self, embedding_file, unk_in_pretrain=None):
         #  ensure the <PAD> index is 0

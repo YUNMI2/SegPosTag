@@ -12,8 +12,9 @@ pytorch = 0.4.1
 
 ## config
 ```
-config.seg = Ture     # do Seg or SegPos , F1 value evaluate
-config.seg = False    # only do Pos, accuracy evaluate 
+config.seg = Ture         # do Seg or SegPos , F1 value evaluate
+config.seg = False        # only do Pos, accuracy evaluate 
+config.train_files_hold   # train too large, split and store 
 ```
 
 ## running

@@ -6,7 +6,7 @@ import torch.utils.data as Data
 
 from config import config
 from model.bilstm_crf import BiLSTM_CRF
-from train import process_data
+from utils.dataset import process_data
 from utils import *
 from utils.mylib import *
 
@@ -25,13 +25,13 @@ if __name__ == '__main__':
 
     # choose GPU
     if args.gpu >= 0:
-        use_cuda = True
+        config.use_cuda = True
         torch.cuda.set_device(args.gpu)
         torch.set_num_threads(args.thread)
         print('using GPU device : %d' % args.gpu, flush =True)
     else:
         torch.set_num_threads(args.thread)
-        use_cuda = False
+        config.use_cuda = False
 
     # loading vocab
     vocab = load_pkl(config.vocab_file)
@@ -39,20 +39,21 @@ if __name__ == '__main__':
     print("loading model...", flush =True)
     network = torch.load(config.net_file)
     # if use GPU , move all needed tensors to CUDA
-    if use_cuda:
+    if config.use_cuda:
         network.cuda()
     else:
         network.cpu()
     print('loading three datasets...', flush =True)
-    test = Corpus(config.eval_file)
+    #test = Corpus(config.eval_file)
+    test_sentences, test_labels = Corpus().getWordLabelSeq(config.eval_file)
+    test_data = process_data(vocab, test_sentences, test_labels, max_word_len=20)
     # process test data , change string to index
     print('processing datasets...', flush =True)
-    test_data = process_data(vocab, test, max_word_len=30)
     test_loader = Data.DataLoader(
         dataset=test_data,
         batch_size=config.eval_batch,
         shuffle=False,
-        collate_fn=collate_fn if not use_cuda else collate_fn_cuda
+        collate_fn=collate_fn if not config.use_cuda else collate_fn_cuda
     )
 
     # init evaluatior

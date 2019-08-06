@@ -5,6 +5,8 @@ import torch.nn as nn
 import torch.optim as optim
 from .mylib import *
 import tqdm
+from .dataset import *
+from .corpus import *
 
 class Trainer(object):
     def __init__(self, network, config):
@@ -24,14 +26,14 @@ class Trainer(object):
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
 
-    def train(self, data_loaders, evaluator):
+    def train(self, train_files, test_data_loaders, evaluator):
         # record some parameters
         max_dev_f = 0
         max_test_f = 0
         max_epoch = 0
         patience = 0
-
-        train_loader, dev_loader, test_loader = data_loaders
+      
+        dev_loader, test_loader = test_data_loaders
 
         # begin to train
         print('start to train the model ', flush = True)
@@ -44,20 +46,41 @@ class Trainer(object):
                 self.lr_decay(self.optimizer, e, self.config.decay, self.config.lr)
                 
             #for batch in tqdm.tqdm(train_loader):
-            for batch in train_loader:
-                self.optimizer.zero_grad()
-                mask, out, targets = self.network.forward_batch(batch)
-                loss = self.network.get_loss(out, targets, mask)
-
-                loss.backward()
-                nn.utils.clip_grad_norm_(self.network.parameters(), 5.0)
-                self.optimizer.step()
+            for one_train_file in train_files:
+                train_sentences, train_labels = Corpus().getWordLabelSeq(one_train_file)
+                train_data = process_data(evaluator.vocab, train_sentences, train_labels, max_word_len=20)
+                train_loader = Data.DataLoader(
+                    dataset=train_data,
+                    batch_size=self.config.batch_size,
+                    shuffle=True,
+                    collate_fn=collate_fn if not self.config.use_cuda else collate_fn_cuda
+                )
+                
+                for batch in train_loader:
+                    self.optimizer.zero_grad()
+                    mask, out, targets = self.network.forward_batch(batch)
+                    loss = self.network.get_loss(out, targets, mask)
+                   
+                    loss.backward()
+                    nn.utils.clip_grad_norm_(self.network.parameters(), 5.0)
+                    self.optimizer.step()
+            
                 
             with torch.no_grad():
+                
+                # 训练数据太多，只选择其中一个来代表测试Train的loss
                 print("Computing Train Loss.........", flush = True)
+                train_sentences, train_labels = Corpus().getWordLabelSeq(train_files[0])
+                train_data = process_data(evaluator.vocab, train_sentences, train_labels, max_word_len=20)
+                train_loader = Data.DataLoader(
+                    dataset=train_data,
+                    batch_size=self.config.batch_size,
+                    shuffle=True,
+                    collate_fn=collate_fn if not self.config.use_cuda else collate_fn_cuda
+                )
                 train_loss, train_p, train_r, train_f, train_word, train_predict, train_target = evaluator.eval(self.network, train_loader)
-                print('train : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (train_loss, train_p, train_r, train_f), flush = True)          
-   
+                print('Train   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (train_loss, train_p, train_r, train_f), flush = True)
+                
                 print("Computing Dev Loss.........", flush = True)
                 dev_loss, dev_p, dev_r, dev_f, dev_word, dev_predict, dev_target  = evaluator.eval(self.network, dev_loader)
                 print('dev   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (dev_loss, dev_p, dev_r, dev_f), flush = True)
@@ -76,7 +99,7 @@ class Trainer(object):
                 print('save the model...', flush = True)
                 torch.save(self.network, self.config.net_file)
                 if self.config.predictOut:
-                    writeConll(self.config.predict_train_file, train_word, train_predict, train_target)
+                #    writeConll(self.config.predict_train_file, train_word, train_predict, train_target)
                     writeConll(self.config.predict_dev_file, dev_word, dev_predict, dev_target)
                     writeConll(self.config.predict_test_file, test_word, test_predict, test_target)
             else:
