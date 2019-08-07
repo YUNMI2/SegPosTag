@@ -10,6 +10,9 @@ import os
 import torch.optim as optim
 import datetime
 import torch.nn as nn
+from package.parallel import *
+
+
 
 def forward_batch(net, batch):
     word_idxs, label_idxs = batch
@@ -121,7 +124,6 @@ if __name__ == '__main__':
         # use multi-GPU 
         if gpus.__len__() > 1:
             net = torch.nn.DataParallel(net, device_ids=gpus)
-            optimizer = nn.DataParallel(optimizer, device_ids=gpus)
         net.cuda(gpus[0])
 
     print("Start to Train a model........", flush=True)
@@ -141,7 +143,7 @@ if __name__ == '__main__':
              train_loader = Data.DataLoader(
                   dataset=process_data(vocab, train_sentences, train_labels, max_word_len=20),
                   batch_size=config.batch_size,
-                  shuffle=True,
+                  shuffle=False,
                   collate_fn=collate_fn if not config.use_cuda else collate_fn_cuda
              )
              del train_sentences, train_labels
@@ -149,20 +151,16 @@ if __name__ == '__main__':
              for batch in train_loader:
                  optimizer.zero_grad()
                  mask, out, targets = forward_batch(net, batch)
+                 
                  if gpus.__len__() > 1:
                      loss = net.module.get_loss(out, targets, mask)
                  else:
                      loss = net.get_loss(out, targets, mask)
- 
                  
                  #backword 
                  loss.backward()
                  nn.utils.clip_grad_norm_(net.parameters(), 5.0)
-                 if gpus.__len__() > 1:
-                     optimizer.module.step()
-                 else:
-                     optimizer.step()
-                    
+                 optimizer.step()
         
         with torch.no_grad():
             net.eval()
@@ -182,10 +180,9 @@ if __name__ == '__main__':
             for batch in train_loader:
                 mask, out, targets = forward_batch(net, batch)
                 if gpus.__len__() > 1:
-                    train_loss += net.module.get_loss(out, targets, mask) * config.batch_size 
+                    train_loss += net.module.get_loss(out, targets, mask)  
                 else:
-                    train_loss += net.get_loss(out, targets, mask) * config.batch_size 
-                    
+                    train_loss += net.get_loss(out, targets, mask)  
                 train_evaler.parse(batch, mask, out, targets)
             train_p, train_r, train_f = train_evaler.eval()
             print('Train   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (train_loss, train_p, train_r, train_f), flush = True)
@@ -195,10 +192,10 @@ if __name__ == '__main__':
             for batch in dev_loader:
                 mask, out, targets = forward_batch(net, batch)
                 if gpus.__len__() > 1:
-                    dev_loss += net.module.get_loss(out, targets, mask) * config.batch_size 
+                    dev_loss += net.module.get_loss(out, targets, mask)  
                 else:
-                    dev_loss += net.get_loss(out, targets, mask) * config.batch_size 
-             
+                    dev_loss += net.get_loss(out, targets, mask)  
+                
                 dev_evaler.parse(batch, mask, out, targets)
             dev_p, dev_r, dev_f = dev_evaler.eval()
             print('dev   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (dev_loss, dev_p, dev_r, dev_f), flush = True)
@@ -208,9 +205,9 @@ if __name__ == '__main__':
             for batch in test_loader:
                 mask, out, targets = forward_batch(net, batch)
                 if gpus.__len__() > 1:
-                    test_loss += net.module.get_loss(out, targets, mask) * config.batch_size 
+                    test_loss += net.module.get_loss(out, targets, mask)  
                 else:    
-                    test_loss += net.get_loss(out, targets, mask) * config.batch_size 
+                    test_loss += net.get_loss(out, targets, mask)  
                 test_evaler.parse(batch, mask, out, targets)
             test_p, test_r, test_f = test_evaler.eval()
             print('test  : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (test_loss, test_p, test_r, test_f), flush = True)
@@ -223,14 +220,14 @@ if __name__ == '__main__':
             patience = 0
             print('Ex best epoch is epoch = %d ,the dev f1 = %.4f the test f1 = %.4f' %(max_epoch, max_dev_f, max_test_f), flush = True)
             print('save the model...', flush = True)
-            if config.multiGPU: 
-                torch.save(net.module.stat_dict(), config.net_file)
-            else:
-                torch.save(net, config.net_file)
+            #if config.multiGPU: 
+            #    torch.save(net.module.stat_dict(), config.net_file)
+            #else:
+            #    torch.save(net, config.net_file)
             if config.predictOut:
                 train_evaler.write("")
                 dev_evaler.write("")
-                test_eval.write("")
+                test_evaler.write("")
         else: 
             patience += 1
         del train_evaler, dev_evaler, test_evaler

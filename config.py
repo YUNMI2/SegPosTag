@@ -69,12 +69,12 @@ class BiLSTM_CRF_Config(Config):
     epoch = 1000
     gpu = ""
     lr = 0.01
-    batch_size = 64
+    batch_size = 512
     eval_batch = 100
     tread_num = 4
     decay = 0.05
-    patience = 100
-    shuffle = True
+    patience = 10
+    shuffle = False
 
 
 config = {
