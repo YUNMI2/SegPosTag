@@ -65,19 +65,79 @@ class Decoder(object):
 
 
 class Evaluator(object):
-    def __init__(self, vocab, config, use_crf=True):
+    def __init__(self, name, vocab, config, net):
+        assert name in ["Train", "Dev", "Test"]
+        self.name = name 
         self.pred_num = 0
         self.gold_num = 0
         self.correct_num = 0
         self.vocab = vocab
-        self.use_crf = use_crf
-        self.seg = config.seg
+        self.config = config
+        self.network = net
+        self.wordSeq = []
+        self.predictSeq = []
+        self.targetSeq = []
 
     def clear_num(self):
         self.pred_num = 0
         self.gold_num = 0
         self.correct_num = 0
 
+    def parse(self, batch, mask, out, targets):
+        sen_lens = mask.sum(1)
+        if self.config.multiGPU:
+            predicts = Decoder.viterbi_batch(self.network.module.crf, out, mask)
+        else:
+            predicts = Decoder.viterbi_batch(self.network.crf, out, mask)
+        
+        targets = torch.split(targets[mask], sen_lens.tolist())
+        words = torch.split(batch[0][mask], sen_lens.tolist())
+        for word, predict, target in zip(words, predicts, targets):
+            assert word.__len__() == predict.__len__() == target.__len__()
+            word, predict, target = self.vocab.id2word(word.tolist()), self.vocab.id2label(predict.tolist()), self.vocab.id2label(target.tolist())
+            self.wordSeq.append(word)
+            self.predictSeq.append(predict)
+            self.targetSeq.append(target)
+            if not self.config.seg:
+                correct_num = sum(x==y for x,y in zip(predict, target))
+                self.correct_num += correct_num
+                self.pred_num += len(predict)
+                self.gold_num += len(target)
+            else:
+                correct_num, predict_num, target_num = PRF(predict, target).SegPos()
+                self.correct_num += correct_num
+                self.pred_num += predict_num
+                self.gold_num += target_num
+
+
+    def eval(self):
+        precision = self.correct_num/self.pred_num
+        recall = self.correct_num/self.gold_num
+        f1 = 2*precision*recall/(precision+recall)
+        self.clear_num()
+        return precision, recall, f1
+
+
+
+
+    def write(self, fileName):
+        if not fileName.strip():
+            return
+        print("\nStart Writing file", end="", flush=True)
+        i = 0
+        with open(fileName, "w", encoding="utf-8") as fw:
+            for word, predict, target in zip(self.wordSeq, self.predictSeq, self.targetSeq):
+                assert word.__len__() == predict.__len__() == target.__len__()
+                for x, y, z in zip(word, predict, target):
+                    fw.write(x + "\t" + y + "\t" + z + "\n")
+                fw.write("\n")
+
+                i += 1
+                if i % (predictSeq.__len__()//10) == 0:
+                    print(".", end="", flush=True)
+        print("\nFinish Writing file!\n", flush=True)    
+        
+    '''
     def eval(self, network, data_loader):
         network.eval()
         total_loss = 0.0
@@ -91,13 +151,13 @@ class Evaluator(object):
             batch_size = batch[0].size(0)
             total_num += batch_size
 
-            mask, out, targets = network.forward_batch(batch)
+            mask, out, targets = network.module.forward_batch(batch)
             sen_lens = mask.sum(1)
 
-            batch_loss = network.get_loss(out, targets, mask)
+            batch_loss = network.module.get_loss(out, targets, mask)
             total_loss += batch_loss * batch_size
 
-            predicts = Decoder.viterbi_batch(network.crf, out, mask)
+            predicts = Decoder.viterbi_batch(network.module.crf, out, mask)
             targets = torch.split(targets[mask], sen_lens.tolist())
             words = torch.split(batch[0][mask], sen_lens.tolist())
             
@@ -127,4 +187,4 @@ class Evaluator(object):
 
         self.clear_num()
         return total_loss/total_num, precision, recall, f1, wordSeq, predictSeq, targetSeq
-
+    '''

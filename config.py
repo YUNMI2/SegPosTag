@@ -25,6 +25,7 @@ class Char_LSTM_CRF_Config(Config):
     vocab_file = './save/vocab.pkl'
 
     use_cuda = False
+    multiGPU = False
     word_hidden = 300
     char_hidden = 200
     layers = 2
@@ -36,7 +37,7 @@ class Char_LSTM_CRF_Config(Config):
     
     optimizer = 'adam'
     epoch = 100
-    gpu = -1
+    gpu = "" 
     lr = 0.001
     batch_size = 5
     eval_batch = 100
@@ -53,6 +54,7 @@ class BiLSTM_CRF_Config(Config):
     vocab_file = './save/vocab.pkl'
     
     use_cuda = False
+    multiGPU = False
     seg = True
 
     word_hidden = 300
@@ -64,14 +66,14 @@ class BiLSTM_CRF_Config(Config):
     predictOut = False 
     
     optimizer = 'adam'
-    epoch = 10
-    gpu = -1
+    epoch = 1000
+    gpu = ""
     lr = 0.01
     batch_size = 64
     eval_batch = 100
     tread_num = 4
     decay = 0.05
-    patience = 10
+    patience = 100
     shuffle = True
 
 

@@ -46,7 +46,7 @@ class BiLSTM_CRF(torch.nn.Module):
         init.xavier_uniform_(self.out.weight)
         init.normal_(self.embedding.weight, 0, 1 / self.embedding_dim ** 0.5)
 
-    def forward(self, word_idxs):
+    def forward(self, word_idxs, total_len):
         mask = word_idxs.gt(0)
         sen_lens = mask.sum(1)#每句话的长度
 
@@ -54,16 +54,14 @@ class BiLSTM_CRF(torch.nn.Module):
         feature = self.drop1(word_vec)
 
         sorted_lens, sorted_idx = torch.sort(sen_lens, dim=0, descending=True)
-
         reverse_idx = torch.sort(sorted_idx, dim=0)[1]
 
         feature = feature[sorted_idx]
         feature = pack_padded_sequence(feature, sorted_lens, batch_first=True)
 
         r_out, state = self.lstm_layer(feature, None)
-        out, _ = pad_packed_sequence(r_out, batch_first=True, padding_value=0)
+        out, _ = pad_packed_sequence(r_out, batch_first=True, total_length = total_len,padding_value=0)
         out = out[reverse_idx]
-        # out = torch.tanh(self.hidden(out))
         out = self.out(out)
         return out
 
