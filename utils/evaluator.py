@@ -1,7 +1,7 @@
 import torch
 import tqdm
 from .prf import *
-
+import torch.nn.functional as F
 
 class Decoder(object):
     @staticmethod
@@ -85,10 +85,10 @@ class Evaluator(object):
 
     def parse(self, batch, mask, out, targets):
         sen_lens = mask.sum(1)
-        if self.config.multiGPU:
-            predicts = Decoder.viterbi_batch(self.network.module.crf, out, mask)
+        if self.config.use_crf:
+            predicts = Decoder.viterbi_batch(self.network.module.crf, out, mask) if self.config.multiGPU else Decoder.viterbi_batch(self.network.crf, out, mask)
         else:
-            predicts = Decoder.viterbi_batch(self.network.crf, out, mask)
+            predicts = [torch.max(F.softmax(out_sen[:sen_lens[i]], dim = 1), 1)[1] for i,out_sen in enumerate(out)]
         
         targets = torch.split(targets[mask], sen_lens.tolist())
         words = torch.split(batch[0][mask], sen_lens.tolist())
@@ -137,54 +137,3 @@ class Evaluator(object):
                     print(".", end="", flush=True)
         print("\nFinish Writing file!\n", flush=True)    
         
-    '''
-    def eval(self, network, data_loader):
-        network.eval()
-        total_loss = 0.0
-        total_num = 0
-        
-        wordSeq = []
-        predictSeq = []
-        targetSeq = [] 
-        
-        for batch in data_loader:
-            batch_size = batch[0].size(0)
-            total_num += batch_size
-
-            mask, out, targets = network.module.forward_batch(batch)
-            sen_lens = mask.sum(1)
-
-            batch_loss = network.module.get_loss(out, targets, mask)
-            total_loss += batch_loss * batch_size
-
-            predicts = Decoder.viterbi_batch(network.module.crf, out, mask)
-            targets = torch.split(targets[mask], sen_lens.tolist())
-            words = torch.split(batch[0][mask], sen_lens.tolist())
-            
-            
-
-            for word, predict, target in zip(words, predicts, targets):
-                assert word.__len__() == predict.__len__() == target.__len__()
-                word, predict, target = self.vocab.id2word(word.tolist()), self.vocab.id2label(predict.tolist()), self.vocab.id2label(target.tolist())
-                wordSeq.append(word)
-                predictSeq.append(predict)
-                targetSeq.append(target)
-                if not self.seg:
-                    correct_num = sum(x==y for x,y in zip(predict, target))
-                    self.correct_num += correct_num
-                    self.pred_num += len(predict)
-                    self.gold_num += len(target)
-                else:
-                    correct_num, predict_num, target_num = PRF(predict, target).SegPos()
-                    self.correct_num += correct_num
-                    self.pred_num += predict_num
-                    self.gold_num += target_num
- 
-
-        precision = self.correct_num/self.pred_num
-        recall = self.correct_num/self.gold_num
-        f1 = 2*precision*recall/(precision+recall)
-
-        self.clear_num()
-        return total_loss/total_num, precision, recall, f1, wordSeq, predictSeq, targetSeq
-    '''

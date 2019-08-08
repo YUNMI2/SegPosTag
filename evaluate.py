@@ -13,7 +13,7 @@ from train import *
 
 if __name__ == '__main__':
     # init config
-    model_name = 'bilstm_crf'
+    model_name = 'bilstm'
     #model_name = 'char_lstm_crf'
     config = config[model_name]
 
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     print('processing datasets...', flush =True)
     test_loader = Data.DataLoader(
         dataset=process_data(vocab, test_sentences, test_labels, max_word_len=20),
-        batch_size=config.eval_batch,
+        batch_size=1,
         shuffle=False,
         collate_fn=collate_fn if not config.use_cuda else collate_fn_cuda
     )

@@ -24,6 +24,7 @@ config.seg = False    # only do Pos, accuracy evaluate
 
 ## update
 ```
+2019-08-08 17:01  # besides crf-loss, add softmax loss
 2019-08-08 11:45  # add functions of assigning gpu id and saveing&&loading model on multiGPU version
 2019-08-07 20:33  # fix some bugs on multiGPU version
 2019-08-07 16:39  # rewrite train, now train support multiGPU, but test is on the way

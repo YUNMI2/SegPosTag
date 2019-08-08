@@ -2,7 +2,8 @@ import argparse
 import torch
 import torch.utils.data as Data
 from config import config
-from model.bilstm_crf import BiLSTM_CRF
+#from model.bilstm_crf import BiLSTM_CRF
+from model.bilstm import BiLSTM
 from utils import *
 from utils.dataset import *
 from utils.mylib import *
@@ -24,7 +25,7 @@ def forward_batch(net, batch):
 
 if __name__ == '__main__':
     # init config
-    model_name = 'bilstm_crf'
+    model_name = 'bilstm'
     config = config[model_name]
     
     parser = argparse.ArgumentParser(description='Training')
@@ -106,13 +107,22 @@ if __name__ == '__main__':
     del test_sentences, test_labels
 
     # build natwork
-    net = BiLSTM_CRF(vocab.num_words,
+    if config.use_crf:  
+        net = BiLSTM_CRF(vocab.num_words,
                      config.word_dim,
                      config.layers,
                      config.word_hidden,
                      vocab.num_labels,
                      config.dropout,
-    )
+        )  
+    else:
+        net = BiLSTM(vocab.num_words,
+                     config.word_dim,
+                     config.layers,
+                     config.word_hidden,
+                     vocab.num_labels,
+                     config.dropout,
+        )
     print(net)
 
     # init 
