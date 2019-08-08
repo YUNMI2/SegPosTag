@@ -149,7 +149,10 @@ if __name__ == '__main__':
         print('--------------------------------------------Epoch<%d>-------------------------------------------- '%(e+1), flush=True)
         net.train()
         time_start = datetime.datetime.now()
+        file_num = 0
         for train_file in train_files:
+             file_num += 1
+             print("%s/%s"%(file_num, train_files.__len__()), end="\t", flush=True)
              train_sentences, train_labels = Corpus().getWordLabelSeq(train_file)
              train_loader = Data.DataLoader(
                   dataset=process_data(vocab, train_sentences, train_labels, max_word_len=20),
@@ -172,7 +175,8 @@ if __name__ == '__main__':
                  loss.backward()
                  nn.utils.clip_grad_norm_(net.parameters(), 5.0)
                  optimizer.step()
-        
+       
+        print("\n", fulsh=True)
         with torch.no_grad():
             net.eval()
             train_loss, dev_loss, test_loss = 0.0, 0.0, 0.0

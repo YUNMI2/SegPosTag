@@ -4,7 +4,6 @@ class Config(object):
     dev_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Dev5-Fine.SegPos.conll'
     test_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Test5-Fine.SegPos.conll'
     eval_file = '/search/odin/zhuyun/Data/PostData/EN_NUM/english_num2.addPUNCT.conll'
-    '''
     embedding_file = '' #'../data/embedding/giga.100.txt'
     
     #train_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-train.segpos.conll'
@@ -19,6 +18,19 @@ class Config(object):
     predict_test_file = './predict/ctb5-test-out.segpos.conll'
     predict_eval_file = './predict/ctb5-eval-out.segpos.conll'
     #predict_eval_file = './eval/PostEN.addPUNCT.predict.conll' 
+    '''
+
+
+    dev_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/origin/Dev5-Fine'
+    test_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/origin/Test5-Fine'
+    #eval_file = '/search/odin/zhuyun/Data/PostData/EN_NUM/english_num2.addPUNCT.conll'
+
+    embedding_file = '' #'../data/embedding/giga.100.txt'
+
+    predict_test_file = './predict/google-test-out.segpos.conll'
+    train_file = ""
+    train_files_hold = "/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/split/train/"
+    
     
 class Char_LSTM_CRF_Config(Config):
     model = 'Char_LSTM_CRF'
@@ -102,7 +114,7 @@ class BiLSTM_Config(Config):
     epoch = 60
     gpu = ""
     lr = 0.01
-    batch_size = 512
+    batch_size = 1024
     eval_batch = 100
     tread_num = 4
     decay = 0.05

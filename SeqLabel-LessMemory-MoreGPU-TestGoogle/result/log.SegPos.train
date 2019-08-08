@@ -1,0 +1,47 @@
+setting:
+Namespace(gpu='0,1,2,3', pre_emb=False, seed=10, thread=4)
+
+using GPU device : 0,1,2,3
+GPU seed = 10
+CPU seed = 10
+__module__ = config
+model = BiLSTM
+net_file = ./save/bilstm.pt
+vocab_file = ./save/vocab.pkl
+use_crf = False
+use_cuda = True
+multiGPU = True
+seg = True
+word_hidden = 300
+layers = 2
+dropout = 0.55
+word_dim = 100
+predictOut = True
+optimizer = adam
+epoch = 60
+gpu = 
+lr = 0.01
+batch_size = 1024
+eval_batch = 100
+tread_num = 4
+decay = 0.05
+patience = 10
+shuffle = True
+__doc__ = None
+loading three datasets...
+in Train : sentences:79238849，words:1078618752
+in Dev : sentences:4400581，words:59897850
+in Test : sentences:4401899，words:59918009
+Words : 2569729, labels : 41
+BiLSTM(
+  (drop1): Dropout(p=0.55)
+  (embedding): Embedding(2569729, 100, padding_idx=0)
+  (lstm_layer): LSTM(100, 150, num_layers=2, batch_first=True, dropout=0.2, bidirectional=True)
+  (out): Linear(in_features=300, out_features=41, bias=True)
+  (loss_func): CrossEntropyLoss()
+)
+Using Adam optimizer...
+Start to Train a model........
+init ...
+--------------------------------------------Epoch<1>-------------------------------------------- 
+1/90	2/90	3/90	4/90	
