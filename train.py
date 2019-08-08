@@ -10,8 +10,9 @@ import os
 import torch.optim as optim
 import datetime
 import torch.nn as nn
-from package.parallel import *
+import warnings
 
+warnings.filterwarnings('ignore')
 
 
 def forward_batch(net, batch):
@@ -41,7 +42,7 @@ if __name__ == '__main__':
         gpus = [int(x) for x in args.gpu.split(",")]
         if gpus.__len__() > 1:
             config.multiGPU = True 
-       # torch.cuda.set_device(gpus[0])
+        torch.cuda.set_device(gpus[0])
         torch.set_num_threads(args.thread)
         torch.cuda.manual_seed(args.seed)
         torch.manual_seed(args.seed)
@@ -124,7 +125,7 @@ if __name__ == '__main__':
         # use multi-GPU 
         if gpus.__len__() > 1:
             net = torch.nn.DataParallel(net, device_ids=gpus)
-        net.cuda(gpus[0])
+        net.cuda()
 
     print("Start to Train a model........", flush=True)
 
@@ -143,7 +144,7 @@ if __name__ == '__main__':
              train_loader = Data.DataLoader(
                   dataset=process_data(vocab, train_sentences, train_labels, max_word_len=20),
                   batch_size=config.batch_size,
-                  shuffle=False,
+                  shuffle=config.shuffle,
                   collate_fn=collate_fn if not config.use_cuda else collate_fn_cuda
              )
              del train_sentences, train_labels
@@ -220,14 +221,15 @@ if __name__ == '__main__':
             patience = 0
             print('Ex best epoch is epoch = %d ,the dev f1 = %.4f the test f1 = %.4f' %(max_epoch, max_dev_f, max_test_f), flush = True)
             print('save the model...', flush = True)
-            #if config.multiGPU: 
-            #    torch.save(net.module.stat_dict(), config.net_file)
-            #else:
-            #    torch.save(net, config.net_file)
+            if config.multiGPU: 
+                torch.save(net.module, config.net_file)
+            else:
+                torch.save(net, config.net_file)
+            #torch.save(net, config.net_file)
             if config.predictOut:
-                train_evaler.write("")
-                dev_evaler.write("")
-                test_evaler.write("")
+                #train_evaler.write("")
+                #dev_evaler.write("")
+                test_evaler.write(config.predict_test_file)
         else: 
             patience += 1
         del train_evaler, dev_evaler, test_evaler

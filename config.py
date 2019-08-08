@@ -7,17 +7,18 @@ class Config(object):
     '''
     embedding_file = '' #'../data/embedding/giga.100.txt'
     
-    train_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-train.segpos.conll'
-    #train_file = ""
+    #train_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-train.segpos.conll'
+    train_file = ""
     dev_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-dev.segpos.conll'
     test_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll'
     eval_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll'
-    #train_files_hold = "/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/split/train/"
-    train_files_hold = ""
-    predict_train_file = './predict/ctb5-train-out.segpos.conll'
-    predict_dev_file = './predict/ctb5-dev-out.segpos.conll'
+    train_files_hold = "/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/split/train/"
+    #train_files_hold = ""
+    #predict_train_file = './predict/ctb5-train-out.segpos.conll'
+    #predict_dev_file = './predict/ctb5-dev-out.segpos.conll'
     predict_test_file = './predict/ctb5-test-out.segpos.conll'
-    predict_eval_file = './eval/PostEN.addPUNCT.predict.conll' 
+    predict_eval_file = './predict/ctb5-test-out.segpos.conll'
+    #predict_eval_file = './eval/PostEN.addPUNCT.predict.conll' 
     
 class Char_LSTM_CRF_Config(Config):
     model = 'Char_LSTM_CRF'
@@ -62,11 +63,11 @@ class BiLSTM_CRF_Config(Config):
     dropout = 0.55
     word_dim = 100
 
-    #predictOut = True
-    predictOut = False 
+    predictOut = True
+    #predictOut = False 
     
     optimizer = 'adam'
-    epoch = 1000
+    epoch = 30
     gpu = ""
     lr = 0.01
     batch_size = 512
@@ -74,7 +75,8 @@ class BiLSTM_CRF_Config(Config):
     tread_num = 4
     decay = 0.05
     patience = 10
-    shuffle = False
+    #shuffle = False
+    shuffle = True
 
 
 config = {

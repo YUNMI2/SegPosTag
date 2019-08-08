@@ -133,7 +133,7 @@ class Evaluator(object):
                 fw.write("\n")
 
                 i += 1
-                if i % (predictSeq.__len__()//10) == 0:
+                if i % (self.predictSeq.__len__()//10) == 0:
                     print(".", end="", flush=True)
         print("\nFinish Writing file!\n", flush=True)    
         
