@@ -1,0 +1,78 @@
+parser:
+Namespace(data='CTB5-POS', gpu='MultiGPU', model='bilstm', rank=0, seed=10, thread=4)
+
+config:
+train_path =  /search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/split/train/
+dev_path =  /search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-dev.segpos.conll
+test_path =  /search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll
+seg =  True
+use_cuda =  True
+useMultiGPU =  True
+useDistGPU =  False
+gpu_ids =  [0, 1]
+model =  BiLSTM
+saveModel =  True
+net_file =  ./save/bilstm.pt
+vocab_file =  ./save/vocab.pkl
+savePredict =  True
+train_out_path =  
+dev_out_path =  
+test_out_path =  ./predict/test-out
+use_crf =  False
+word_hidden =  300
+char_hidden =  200
+layers =  2
+dropout =  0.55
+char_dim =  100
+word_dim =  100
+optimizer =  adam
+epoch =  100
+gpu =  
+lr =  0.001
+batch_size =  5
+eval_batch =  100
+tread_num =  4
+decay =  0.05
+patience =  2
+shuffle =  True
+config_path =  ./conf/bilstm.conf
+
+CPU seed = 10
+GPU id = 0
+GPU seed = 10
+
+loading three datasets...
+in Train : sentences:16091，words:714878
+in Dev : sentences:803，words:33332
+in Test : sentences:1910，words:81660
+Words : 3635, labels : 98
+BiLSTM(
+  (drop1): Dropout(p=0.55)
+  (embedding): Embedding(3635, 100, padding_idx=0)
+  (lstm_layer): LSTM(100, 150, num_layers=2, batch_first=True, dropout=0.2, bidirectional=True)
+  (out): Linear(in_features=300, out_features=98, bias=True)
+  (loss_func): CrossEntropyLoss()
+)
+Using Adam optimizer...
+Start to Train a model........
+init ...
+
+--------------------------------------------Epoch<1>-------------------------------------------- 
+[1/5] 0:00:27.457117	[2/5] 0:00:23.833078	[3/5] 0:00:25.231782	[4/5] 0:00:26.625099	[5/5] 0:00:26.446774	
+Start Test...........
+Computing Train Loss.........
+Train   : loss = 1696.8785  precision = 0.8105  recall = 0.8167  f1 = 0.8136
+Computing Dev Loss..........
+dev   : loss = 427.2024  precision = 0.7974  recall = 0.7991  f1 = 0.7982
+Computing Test Loss..........
+test  : loss = 1027.7734  precision = 0.7904  recall = 0.7969  f1 = 0.7937
+Ex best epoch is epoch = 1 ,the dev f1 = 0.7982 the test f1 = 0.7937
+save the model...
+
+Start Writing file..........
+Finish Writing file!
+
+iter executing time is 0:02:19.631277
+
+--------------------------------------------Epoch<2>-------------------------------------------- 
+[1/5] 

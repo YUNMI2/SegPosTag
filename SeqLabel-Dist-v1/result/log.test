@@ -1,0 +1,53 @@
+setting:
+Namespace(config='./conf/bilstm.conf', eval_file='/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll', gpu=0, predict_file='./predict/test', thread=4)
+loading conf...
+train_path = /search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/split/train/ 
+dev_path = /search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-dev.segpos.conll 
+test_path = /search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll 
+seg = True 
+use_cuda = True 
+useMultiGPU = False 
+useDistGPU = False 
+world_size = 2 
+gpu_ids = [0, 1] 
+backend = nccl 
+share_method = tcp:// 
+ip_addr = 127.0.0.1 
+ip_port = 23451 
+model = BiLSTM 
+saveModel = True 
+net_file = ./save/bilstm.pt 
+vocab_file = ./save/vocab.pkl 
+savePredict = True 
+train_out_path =  
+dev_out_path =  
+test_out_path = ./predict/test-out 
+use_crf = False 
+word_hidden = 300 
+char_hidden = 200 
+layers = 2 
+dropout = 0.55 
+char_dim = 100 
+word_dim = 100 
+optimizer = adam 
+epoch = 100 
+gpu =  
+lr = 0.001 
+batch_size = 5 
+eval_batch = 100 
+tread_num = 4 
+decay = 0.05 
+patience = 2 
+shuffle = True 
+config_path = ./conf/bilstm.conf 
+loading vocab...
+loading model...
+loading test datasets...
+processing datasets...
+evaluating test data...
+test  : loss = 776.3021  precision = 0.8703  recall = 0.8673  f1 = 0.8688
+
+Start Writing file..........
+Finish Writing file!
+
+iter executing time is 0:00:42.456386
