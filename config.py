@@ -1,53 +1,61 @@
-class Config(object):
-    '''
-    train_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Train90-Fine.SegPos.conll'
-    dev_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Dev5-Fine.SegPos.conll'
-    test_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/Test5-Fine.SegPos.conll'
-    eval_file = '/search/odin/zhuyun/Data/PostData/EN_NUM/english_num2.addPUNCT.conll'
-    embedding_file = '' #'../data/embedding/giga.100.txt'
-    
-    #train_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-train.segpos.conll'
-    train_file = ""
-    dev_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-dev.segpos.conll'
-    test_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll'
-    eval_file = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll'
-    train_files_hold = "/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/split/train/"
-    #train_files_hold = ""
-    #predict_train_file = './predict/ctb5-train-out.segpos.conll'
-    #predict_dev_file = './predict/ctb5-dev-out.segpos.conll'
-    predict_test_file = './predict/ctb5-test-out.segpos.conll'
-    predict_eval_file = './predict/ctb5-eval-out.segpos.conll'
-    #predict_eval_file = './eval/PostEN.addPUNCT.predict.conll' 
-    '''
+class Google_TN_Data_Config:
+    train_path = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-train.segpos.conll'
+    dev_path = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-dev.segpos.conll'
+    test_path = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll'
+    seg = True
 
+class CTB5_POS_Data_Config:
+    train_path = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/split/train/'
+    dev_path = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-dev.segpos.conll'
+    test_path = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll'
+    seg = True
 
-    dev_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/origin/Dev5-Fine'
-    test_file = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/origin/Test5-Fine'
-    #eval_file = '/search/odin/zhuyun/Data/PostData/EN_NUM/english_num2.addPUNCT.conll'
-
-    embedding_file = '' #'../data/embedding/giga.100.txt'
-
-    predict_test_file = './predict/google-test-out.segpos.conll'
-    train_file = ""
-    train_files_hold = "/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/split/train/"
-    
-    
-class Char_LSTM_CRF_Config(Config):
-    model = 'Char_LSTM_CRF'
-    net_file = './save/char_lstm_crf.pt'
-    vocab_file = './save/vocab.pkl'
-    use_crf = True
-
+class SingleCPU_Config:
     use_cuda = False
-    multiGPU = False
+
+class SingleGPU_Config:
+    use_cuda = True
+    useMultiGPU = False
+    useDistGPU = False
+    gpu_ids = [0]
+
+class MultiGPU_Config:
+    use_cuda = True
+    useMultiGPU = True
+    useDistGPU = False
+    gpu_ids = [0, 1]
+
+class DistGPU_Config:
+    use_cuda = True
+    useMultiGPU = False
+    useDistGPU = True
+    world_size = 2
+    gpu_ids = [0, 1]
+    backend = "nccl"
+    share_method = "tcp://"
+    ip_addr = "127.0.0.1"
+    ip_port = "23451"
+
+class BiLSTM_CRF_Config:
+    model = 'BiLSTM_CRF'
+
+    saveModel = True
+    net_file = './save/bilstm_crf.pt'
+    vocab_file = './save/vocab.pkl'
+    
+    savePredict = False
+    train_out_path = ""
+    dev_out_path = ""
+    test_out_path = "" 
+
+    use_crf = True
+  
     word_hidden = 300
     char_hidden = 200
     layers = 2
     dropout = 0.55
     char_dim = 100
     word_dim = 100
-
-    predictOut = False
     
     optimizer = 'adam'
     epoch = 100
@@ -59,75 +67,81 @@ class Char_LSTM_CRF_Config(Config):
     decay = 0.05
     patience = 10
     shuffle = True
-    seg = False
 
+    config_path = "./conf/bilstm_crf.conf"
 
-class BiLSTM_CRF_Config(Config):
-    model = "BiLSTM_CRF"
-    net_file = './save/bilstm_crf.pt'
-    vocab_file = './save/vocab.pkl'
-    use_crf = True
-    
-    use_cuda = False
-    multiGPU = False
-    seg = True
+class BiLSTM_Config:
+    model = 'BiLSTM'
 
-    word_hidden = 300
-    layers = 1
-    dropout = 0.55
-    word_dim = 100
-
-    predictOut = True
-    #predictOut = False 
-    
-    optimizer = 'adam'
-    epoch = 1
-    gpu = ""
-    lr = 0.01
-    batch_size = 512
-    eval_batch = 100
-    tread_num = 4
-    decay = 0.05
-    patience = 10
-    #shuffle = False
-    shuffle = True
-
-class BiLSTM_Config(Config):
-    model = "BiLSTM"
+    saveModel = True
     net_file = './save/bilstm.pt'
     vocab_file = './save/vocab.pkl'
+    
+    savePredict = True
+    train_out_path = ""
+    dev_out_path = ""
+    test_out_path = "./predict/test-out" 
+
     use_crf = False
-
-    use_cuda = False
-    multiGPU = False
-    seg = True
-
+  
     word_hidden = 300
+    char_hidden = 200
     layers = 2
     dropout = 0.55
+    char_dim = 100
     word_dim = 100
-
-    predictOut = True
-    #predictOut = False 
-
+    
     optimizer = 'adam'
-    epoch = 60
-    gpu = ""
-    lr = 0.01
-    batch_size = 1024
+    epoch = 100
+    gpu = "" 
+    lr = 0.001
+    batch_size = 5
     eval_batch = 100
     tread_num = 4
     decay = 0.05
-    patience = 10
-    #shuffle = False
+    patience = 2
     shuffle = True
+    
+    config_path = "./conf/bilstm.conf"
 
 
+class Config:
+    def __init__(self, data, gpu, model):
+        self.paraDict = dict() 
+        for k,v in vars(data).items():
+            if not (k.startswith("__") and k.endswith("__")):
+                self.paraDict[k] = v 
+        for k,v in vars(gpu).items():
+            if not (k.startswith("__") and k.endswith("__")):
+                self.paraDict[k] = v
+        for k,v in vars(model).items():
+            if not (k.startswith("__") and k.endswith("__")):
+                self.paraDict[k] = v
 
-config = {
-    'char_lstm_crf' : Char_LSTM_CRF_Config, # python 可以将类名作为value值
-    'bilstm_crf' : BiLSTM_CRF_Config,
-    'bilstm' : BiLSTM_Config,
+    def show(self):
+        for k,v in self.paraDict.items():
+            print("%s = %s"%(k, v)) 
+
+data_config = {
+    "Google"        : Google_TN_Data_Config,
+    "CTB5-POS"      : CTB5_POS_Data_Config,
+
+}
+
+gpu_config = {
+    'SingleCPU'     : SingleCPU_Config,
+    'SingleGPU'     : SingleGPU_Config,
+    'MultiGPU'      : MultiGPU_Config,
+    'DistGPU'       : DistGPU_Config,
 }
 
 
+model_config = {
+    'bilstm_crf'    : BiLSTM_CRF_Config,
+    'bilstm'        : BiLSTM_Config,
+}
+
+
+if __name__ == "__main__":
+    Config(data_config["Google"], gpu_config["SingleCPU"], model_config["bilstm"]).show()
+	

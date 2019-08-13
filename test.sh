@@ -1,1 +1,1 @@
-nohup python3 $(pwd)/evaluate.py --gpu 0 --thread 4 > ./result/log.SegPos.test 2>&1 &
+nohup python $(pwd)/test.py --config ./conf/bilstm.conf --gpu 0 --thread 4 --eval_file /search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll --predict_file ./predict/test > ./result/log.test 2>&1 &

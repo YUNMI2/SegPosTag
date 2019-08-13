@@ -85,8 +85,8 @@ class Evaluator(object):
 
     def parse(self, batch, mask, out, targets):
         sen_lens = mask.sum(1)
-        if self.config.use_crf:
-            predicts = Decoder.viterbi_batch(self.network.module.crf, out, mask) if self.config.multiGPU else Decoder.viterbi_batch(self.network.crf, out, mask)
+        if self.config["use_crf"]:
+            predicts = Decoder.viterbi_batch(self.network.module.crf, out, mask) if self.config.get("useMultiGPU", False) or self.config.get("useDistGPU", False) else Decoder.viterbi_batch(self.network.crf, out, mask)
         else:
             predicts = [torch.max(F.softmax(out_sen[:sen_lens[i]], dim = 1), 1)[1] for i,out_sen in enumerate(out)]
         
@@ -98,7 +98,7 @@ class Evaluator(object):
             self.wordSeq.append(word)
             self.predictSeq.append(predict)
             self.targetSeq.append(target)
-            if not self.config.seg:
+            if not self.config["seg"]:
                 correct_num = sum(x==y for x,y in zip(predict, target))
                 self.correct_num += correct_num
                 self.pred_num += len(predict)
