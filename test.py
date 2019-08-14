@@ -40,10 +40,10 @@ if __name__ == '__main__':
     net = torch.load(config['net_file'])
 
     # choose GPU
-    if args.gpu > 0:
+    if args.gpu >= 0:
         torch.cuda.set_device(args.gpu)
         torch.set_num_threads(args.thread)
-        print('using GPU device : %d' % args.gpus, flush =True)
+        print('using GPU device : %d' % args.gpu, flush =True)
         config['use_cuda'] = True
         net.cuda()
     else:

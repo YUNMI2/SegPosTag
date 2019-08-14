@@ -1,7 +1,7 @@
 class Google_TN_Data_Config:
-    train_path = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-train.segpos.conll'
-    dev_path = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-dev.segpos.conll'
-    test_path = '/search/odin/zhuyun/Data/WordSeg/CTB5/SEGPOS/origin/ctb5-test.segpos.conll'
+    train_path = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/origin/short/train/'
+    dev_path = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/origin/short/Dev5.short30'
+    test_path = '/search/odin/zhuyun/Data/google-text-normalization-data/TNFine-Data/origin/short/Test5.short30'
     seg = True
 
 class CTB5_POS_Data_Config:
@@ -29,8 +29,8 @@ class DistGPU_Config:
     use_cuda = True
     useMultiGPU = False
     useDistGPU = True
-    world_size = 2
-    gpu_ids = [0, 1]
+    world_size = 4
+    gpu_ids = [4, 5,6,7]
     backend = "nccl"
     share_method = "tcp://"
     ip_addr = "127.0.0.1"
@@ -80,7 +80,7 @@ class BiLSTM_Config:
     savePredict = True
     train_out_path = ""
     dev_out_path = ""
-    test_out_path = "./predict/test-out" 
+    test_out_path = "./predict/google.test.bilstm.out" 
 
     use_crf = False
   
@@ -95,14 +95,14 @@ class BiLSTM_Config:
     epoch = 100
     gpu = "" 
     lr = 0.001
-    batch_size = 5
+    batch_size = 256
     eval_batch = 100
     tread_num = 4
     decay = 0.05
     patience = 2
     shuffle = True
     
-    config_path = "./conf/bilstm.conf"
+    config_path = "./conf/google.bilstm.conf"
 
 
 class Config:
