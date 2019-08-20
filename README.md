@@ -1,8 +1,8 @@
 # SEG POS Tagging 
-
+```
 Model1 : BiLSTM + CRF
 Model2 : BiLSTM + SoftMax
-
+```
 
 ## requirements
 ```
