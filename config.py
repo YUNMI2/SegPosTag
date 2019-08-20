@@ -41,25 +41,24 @@ class BiLSTM_CRF_Config:
 
     saveModel = True
     net_file = './save/bilstm_crf.pt'
-    vocab_file = './save/vocab.pkl'
+    vocab_file = './save/vocab_crf.pkl'
     
-    savePredict = False
+    savePredict = True
     train_out_path = ""
     dev_out_path = ""
-    test_out_path = "" 
+    test_out_path = "./predict/google.test.bilstm_crf.out"
 
     use_crf = True
   
     word_hidden = 300
     char_hidden = 200
-    layers = 2
+    layers = 1
     dropout = 0.55
     char_dim = 100
     word_dim = 100
     
     optimizer = 'adam'
     epoch = 100
-    gpu = "" 
     lr = 0.001
     batch_size = 5
     eval_batch = 100
@@ -93,7 +92,6 @@ class BiLSTM_Config:
     
     optimizer = 'adam'
     epoch = 100
-    gpu = "" 
     lr = 0.001
     batch_size = 256
     eval_batch = 100

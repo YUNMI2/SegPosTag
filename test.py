@@ -35,9 +35,10 @@ if __name__ == '__main__':
     print("loading vocab...", flush =True)
     vocab = load_pkl(config['vocab_file'])
 
+
     # loading network
     print("loading model...", flush =True)
-    net = torch.load(config['net_file'])
+    net = torch.load(config['net_file'], map_location="cpu")
 
     # choose GPU
     if args.gpu >= 0:
