@@ -74,4 +74,4 @@ class BiLSTM(torch.nn.Module):
    
     def get_loss(self, emit, labels, mask):
         n_target = emit.size()[-1] 
-        return self.loss_func(emit.view(-1, n_target), labels.contiguous().view(-1)) / emit.size()[1]
+        return self.loss_func(emit.view(-1, n_target), labels.contiguous().view(-1)) / emit.size()[0]

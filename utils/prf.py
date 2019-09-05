@@ -44,8 +44,9 @@ class PRF:
         # print([x for x in predict_seq if x in target_seq].__len__())
         # print(predict_seq.__len__())
         # print(target_seq.__len__())
+        #print(predict_seq, target_seq)
 
-        return [x for x in predict_seq if x in target_seq].__len__(), predict_seq.__len__(), target_seq.__len__()
+        return [x for x in predict_seq if x in target_seq and not x.endswith(":O~O")].__len__(), [x for x in predict_seq if not x.endswith(":O~O")].__len__(), [x for x in target_seq if not x.endswith(":O~O")].__len__()
 
 
 
@@ -53,10 +54,10 @@ class PRF:
 
 
 if __name__ == "__main__":
-    test = PRF(["B-DATE", "E-DATE", "S-DATE", "O", "B-DATE", "M-DATE", "E-DATE"],
+    test = PRF(["O", "O", "O", "O", "B-DATE", "M-DATE", "E-DATE"],
                ["B-DATE", "E-DATE", "S-DATE", "S-DATE", "B-DATE", "M-DATE", "E-DATE"])
 
-    test.SegPos()
+    print(test.SegPos())
 
 
 

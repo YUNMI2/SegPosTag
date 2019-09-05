@@ -25,6 +25,8 @@ config.seg = False    # only do Pos, accuracy evaluate
 
 ## update
 ```
+2019-09-05 15:36  # fix a bug in computing softmax loss of dev
+2019-09-04 15:20  # fix some bugs in compute prf value and rewrite the predict format
 2019-08-20 15:40  # fix some bugs in Test
 2019-08-14 17:23  # fix some bugs in Test, now can assign gpu id
 2019-08-13 18:01  # rewrite train&&test&&config, add Pytorch Distributed Training Mode, now support four mode[SingleCPU/SingleGPU/MultiGPU/DistGPU]

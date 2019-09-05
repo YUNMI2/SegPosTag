@@ -44,6 +44,7 @@ class Corpus(object):
                 while line:
                     if line.strip():
                         if corpus_type == "Train" and getContent:
+                            #print(line, flush=True)
                             [word, label] = line.strip().split("\t")
                             word_freq[word] = word_freq.get(word, 0) + 1
                             label_freq[label] = label_freq.get(label, 0) + 1
@@ -65,8 +66,8 @@ class Corpus(object):
             line = fo.readline()
             while line:
                  if line.strip():
-                     one_sentence_word.append(line.strip().split("\t")[0])
-                     one_sentence_label.append(line.strip().split("\t")[-1])
+                     one_sentence_word.append(line.strip().split("\t")[0].strip())
+                     one_sentence_label.append(line.strip().split("\t")[-1].strip())
                  else:
                      assert one_sentence_word and one_sentence_label
                      sentence_seq.append(one_sentence_word)

@@ -129,7 +129,8 @@ class Evaluator(object):
             for word, predict, target in zip(self.wordSeq, self.predictSeq, self.targetSeq):
                 assert word.__len__() == predict.__len__() == target.__len__()
                 for x, y, z in zip(word, predict, target):
-                    fw.write(x + "\t" + y + "\t" + z + "\n")
+                    #fw.write(x + "\t" + y + "\t" + z + "\n")
+                    fw.write("%-5s\t%-5s\t%-5s\n"%(x, y, z))
                 fw.write("\n")
 
                 i += 1

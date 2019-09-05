@@ -213,7 +213,9 @@ if __name__ == '__main__':
 
             print("Computing Train Loss.........", flush=True)
             train_evaler = Evaluator("Train", vocab, config, net)
+            num_batch = 0
             for batch in train_loader:
+                num_batch += 1
                 mask, out, targets = forward_batch(net, batch)
                 if config.get("useMultiGPU", False) or config.get("useDistGPU",False) :
                     train_loss += net.module.get_loss(out, targets, mask)  
@@ -221,11 +223,13 @@ if __name__ == '__main__':
                     train_loss += net.get_loss(out, targets, mask)  
                 train_evaler.parse(batch, mask, out, targets)
             train_p, train_r, train_f = train_evaler.eval()
-            print('Train   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (train_loss, train_p, train_r, train_f), flush = True)
+            print('Train   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (train_loss/num_batch, train_p, train_r, train_f), flush = True)
              
             print("Computing Dev Loss..........", flush=True)
             dev_evaler = Evaluator("Dev", vocab, config, net)
+            num_batch = 0
             for batch in dev_loader:
+                num_batch += 1
                 mask, out, targets = forward_batch(net, batch)
                 if config.get("useMultiGPU", False) or config.get("useDistGPU",False) :
                     dev_loss += net.module.get_loss(out, targets, mask)  
@@ -234,11 +238,13 @@ if __name__ == '__main__':
                 
                 dev_evaler.parse(batch, mask, out, targets)
             dev_p, dev_r, dev_f = dev_evaler.eval()
-            print('dev   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (dev_loss, dev_p, dev_r, dev_f), flush = True)
+            print('dev   : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (dev_loss/num_batch, dev_p, dev_r, dev_f), flush = True)
              
             print("Computing Test Loss..........", flush=True)
             test_evaler = Evaluator("Test", vocab, config, net)
+            num_batch = 0
             for batch in test_loader:
+                num_batch += 1
                 mask, out, targets = forward_batch(net, batch)
                 if config.get("useMultiGPU", False) or config.get("useDistGPU",False) :
                     test_loss += net.module.get_loss(out, targets, mask)  
@@ -246,7 +252,7 @@ if __name__ == '__main__':
                     test_loss += net.get_loss(out, targets, mask)  
                 test_evaler.parse(batch, mask, out, targets)
             test_p, test_r, test_f = test_evaler.eval()
-            print('test  : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (test_loss, test_p, test_r, test_f), flush = True)
+            print('test  : loss = %.4f  precision = %.4f  recall = %.4f  f1 = %.4f' % (test_loss/num_batch, test_p, test_r, test_f), flush = True)
 
         # save the model when dev precision get better
         if dev_f > max_dev_f:
@@ -257,11 +263,11 @@ if __name__ == '__main__':
             print('Ex best epoch is epoch = %d ,the dev f1 = %.4f the test f1 = %.4f' %(max_epoch, max_dev_f, max_test_f), flush = True)
             print('save the model...', flush = True)
             if config.get("useMultiGPU", False) or config.get("useDistGPU",False) :
-                torch.save(net.module, config["net_file"])
+                torch.save(net.module, config["net_file"] + "-epoch" + str(e))
             else:
-                torch.save(net, config["net_file"])
+                torch.save(net, config["net_file"] + "-epoch" + str(e))
             if config["savePredict"]:
-                test_evaler.write(config["test_out_path"])
+                test_evaler.write(config["test_out_path"] + "-epoch" + str(e))
         else: 
             patience += 1
         del train_evaler, dev_evaler, test_evaler
